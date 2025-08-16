@@ -64,10 +64,10 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
     return directions[index];
   };
 
-  const getTemperatureColor = (temp: number): string => {
-    if (temp < 10) return '#00f'; // Blue for cold
-    if (temp < 25) return '#0f0'; // Green for mild
-    return '#f00'; // Red for hot
+  const getBackgroundColor = (temperature: number): string => {
+    if (temperature < 10) return 'rgba(0, 0, 255, 0.2)'; // Blue for cold
+    if (temperature < 25) return 'rgba(0, 255, 0, 0.2)'; // Green for mild
+    return 'rgba(255, 0, 0, 0.2)'; // Red for hot
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -75,14 +75,15 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
 
   return (
     weatherData && (
-      <div className="weather-card">
+      <div
+        className="weather-card"
+        style={{ backgroundColor: getBackgroundColor(weatherData.temp) }}
+      >
         <h2>{location}</h2>
         <div className="weather-main">
           <img src={weatherData.icon} alt={weatherData.condition} />
           <div>
-            <h3 style={{ color: getTemperatureColor(weatherData.temp) }}>
-              {weatherData.temp}°C
-            </h3>
+            <h3>{weatherData.temp}°C</h3>
             <p>{weatherData.condition}</p>
           </div>
         </div>
