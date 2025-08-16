@@ -1,11 +1,101 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './WeatherCard.css';
 
-const WeatherCard: React.FC = () => {
+interface WeatherData {
+  temp: number;
+  condition: string;
+  icon: string;
+  humidity: number;
+  windSpeed: number;
+  windDirection: string;
+  pressure: number;
+  visibility: number;
+}
+
+const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      if (!location) return;
+
+      setIsLoading(true);
+      setError('');
+
+      try {
+        const response = await axios.get(
+          `https://api.openweathermap.org/data/2.5/weather`,
+          {
+            params: {
+              q: location,
+              appid: '882766b55dfedf00e1cadb616d42db3c',
+              units: 'metric',
+            },
+          }
+        );
+
+        const data = response.data;
+        setWeatherData({
+          temp: data.main.temp,
+          condition: data.weather[0].description,
+          icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+          humidity: data.main.humidity,
+          windSpeed: data.wind.speed,
+          windDirection: getWindDirection(data.wind.deg),
+          pressure: data.main.pressure,
+          visibility: data.visibility / 1000, // Convert to kilometers
+        });
+      } catch (err) {
+        setError('Failed to fetch weather data. Please try again: ' + err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWeatherData();
+  }, [location]);
+
+  const getWindDirection = (degree: number): string => {
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    const index = Math.round(degree / 45) % 8;
+    return directions[index];
+  };
+
+  const getTemperatureColor = (temp: number): string => {
+    if (temp < 10) return '#00f'; // Blue for cold
+    if (temp < 25) return '#0f0'; // Green for mild
+    return '#f00'; // Red for hot
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
-    <div>
-      <h1>Weather Card</h1>
-      <p>Display weather information here.</p>
-    </div>
+    weatherData && (
+      <div className="weather-card">
+        <h2>{location}</h2>
+        <div className="weather-main">
+          <img src={weatherData.icon} alt={weatherData.condition} />
+          <div>
+            <h3 style={{ color: getTemperatureColor(weatherData.temp) }}>
+              {weatherData.temp}°C
+            </h3>
+            <p>{weatherData.condition}</p>
+          </div>
+        </div>
+        <div className="weather-details">
+          <p>Humidity: {weatherData.humidity}%</p>
+          <p>
+            Wind: {weatherData.windSpeed} m/s {weatherData.windDirection}
+          </p>
+          <p>Pressure: {weatherData.pressure} hPa</p>
+          <p>Visibility: {weatherData.visibility} km</p>
+        </div>
+      </div>
+    )
   );
 };
 
