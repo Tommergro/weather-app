@@ -1,0 +1,2 @@
+   npx create-react-app weather-app --template typescript
+   cd weather-app
