@@ -14,6 +14,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onLocationSelect }) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const API_URL = process.env.REACT_APP_GEO_API_URL;
+  const API_KEY = process.env.REACT_APP_GEO_API_KEY;
+
   // Debounce input changes
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -24,20 +27,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onLocationSelect }) => {
 
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          'https://wft-geo-db.p.rapidapi.com/v1/geo/cities',
-          {
-            headers: {
-              'X-RapidAPI-Key':
-                'ec8cdb8792msh72fde2e6aad7627p130ff9jsn3e2bd1e6c7ee',
-              'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com',
-            },
-            params: {
-              namePrefix: query,
-              limit: 10,
-            },
-          }
-        );
+        const response = await axios.get(`${API_URL}/v1/geo/cities`, {
+          headers: {
+            'X-RapidAPI-Key': API_KEY,
+            'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com',
+          },
+          params: {
+            namePrefix: query,
+            limit: 10,
+          },
+        });
         const results = response.data.data.map((city: City) => city.name);
         setSuggestions(results);
       } catch (error) {
@@ -87,6 +86,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onLocationSelect }) => {
             margin: 0,
             padding: 0,
             zIndex: 1000,
+            color: 'black',
           }}
         >
           {suggestions.map((suggestion, index) => (

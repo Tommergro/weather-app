@@ -9,7 +9,7 @@ import {
   AppBar,
   Toolbar,
 } from '@mui/material';
-import { WbSunny, Nightlight } from '@mui/icons-material';
+import { LightMode, DarkMode } from '@mui/icons-material';
 import SearchBar from '../components/SearchBar';
 import WeatherCard from '../components/WeatherCard';
 
@@ -39,7 +39,7 @@ const HomePage: React.FC = () => {
             <SearchBar onLocationSelect={setLocation} />
           </Box>
           <IconButton onClick={toggleTheme} color="inherit">
-            {darkMode ? <WbSunny /> : <Nightlight />}
+            {darkMode ? <LightMode /> : <DarkMode />}
           </IconButton>
         </Toolbar>
       </AppBar>

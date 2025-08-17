@@ -46,3 +46,24 @@
 .weather-details p {
   margin: 4px 0;
 }
+
+@media (max-width: 600px) {
+  .weather-card {
+    padding: 12px;
+    max-width: 100%;
+  }
+
+  .weather-main img {
+    width: 60px;
+    height: 60px;
+    margin-right: 8px;
+  }
+
+  .weather-main h3 {
+    font-size: 1.5rem;
+  }
+
+  .weather-details {
+    font-size: 0.8rem;
+  }
+}

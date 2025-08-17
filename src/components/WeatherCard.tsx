@@ -18,7 +18,11 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const API_URL = process.env.REACT_APP_WEATHER_API_URL;
+  const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
+
   useEffect(() => {
+    // Fetch weather data when location changes
     const fetchWeatherData = async () => {
       if (!location) return;
 
@@ -26,16 +30,13 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
       setError('');
 
       try {
-        const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/weather`,
-          {
-            params: {
-              q: location,
-              appid: '882766b55dfedf00e1cadb616d42db3c',
-              units: 'metric',
-            },
-          }
-        );
+        const response = await axios.get(`${API_URL}/weather`, {
+          params: {
+            q: location,
+            appid: API_KEY,
+            units: 'metric',
+          },
+        });
 
         const data = response.data;
         setWeatherData({
@@ -59,12 +60,14 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
   }, [location]);
 
   const getWindDirection = (degree: number): string => {
+    // Convert wind degree to cardinal direction
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const index = Math.round(degree / 45) % 8;
     return directions[index];
   };
 
   const getBackgroundColor = (temperature: number): string => {
+    // Adjust background color based on temperature
     if (temperature < 10) return 'rgba(0, 0, 255, 0.2)'; // Blue for cold
     if (temperature < 25) return 'rgba(0, 255, 0, 0.2)'; // Green for mild
     return 'rgba(255, 0, 0, 0.2)'; // Red for hot
