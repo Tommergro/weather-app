@@ -12,10 +12,15 @@ import {
 import { LightMode, DarkMode } from '@mui/icons-material';
 import SearchBar from '../components/SearchBar';
 import WeatherCard from '../components/WeatherCard';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../store';
+import { toggleTheme } from '../store/themeSlice';
 
 const HomePage: React.FC = () => {
   const [location, setLocation] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
+  const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const dispatch = useDispatch();
 
   const theme = createTheme({
     palette: {
@@ -23,8 +28,12 @@ const HomePage: React.FC = () => {
     },
   });
 
-  const toggleTheme = () => {
-    setDarkMode((prevMode) => !prevMode);
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
+  };
+
+  const toggleUnits = () => {
+    setUnits((prevUnits) => (prevUnits === 'metric' ? 'imperial' : 'metric'));
   };
 
   return (
@@ -38,16 +47,21 @@ const HomePage: React.FC = () => {
           <Box style={{ flexGrow: 1, marginLeft: '1rem', marginRight: '1rem' }}>
             <SearchBar onLocationSelect={setLocation} />
           </Box>
-          <IconButton onClick={toggleTheme} color="inherit">
-            {darkMode ? <LightMode /> : <DarkMode />}
-          </IconButton>
+          <Box style={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton onClick={toggleUnits} color="inherit">
+              {units === 'metric' ? '°C' : '°F'}
+            </IconButton>
+            <IconButton onClick={handleToggleTheme} color="inherit">
+              {darkMode ? <LightMode /> : <DarkMode />}
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
       <Container
         maxWidth="sm"
         style={{ marginTop: '2rem', textAlign: 'center' }}
       >
-        {location && <WeatherCard location={location} />}
+        {location && <WeatherCard location={location} units={units} />}
       </Container>
     </ThemeProvider>
   );

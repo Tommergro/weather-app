@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './WeatherCard.css';
+import '../styles/WeatherCard.css';
 
 interface WeatherData {
   temp: number;
@@ -13,7 +13,12 @@ interface WeatherData {
   visibility: number;
 }
 
-const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
+interface WeatherCardProps {
+  location: string;
+  units: 'metric' | 'imperial';
+}
+
+const WeatherCard: React.FC<WeatherCardProps> = ({ location, units }) => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,11 +35,11 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
       setError('');
 
       try {
-        const response = await axios.get(`${API_URL}/weather`, {
+        const response = await axios.get(`${API_URL}/data/2.5/weather`, {
           params: {
             q: location,
             appid: API_KEY,
-            units: 'metric',
+            units: units,
           },
         });
 
@@ -57,7 +62,7 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
     };
 
     fetchWeatherData();
-  }, [location]);
+  }, [location, units]);
 
   const getWindDirection = (degree: number): string => {
     // Convert wind degree to cardinal direction
@@ -86,17 +91,20 @@ const WeatherCard: React.FC<{ location: string }> = ({ location }) => {
         <div className="weather-main">
           <img src={weatherData.icon} alt={weatherData.condition} />
           <div>
-            <h3>{weatherData.temp}°C</h3>
+            <h3>
+              {weatherData.temp}
+              {units === 'metric' ? '°C' : '°F'}
+            </h3>
             <p>{weatherData.condition}</p>
           </div>
         </div>
         <div className="weather-details">
           <p>Humidity: {weatherData.humidity}%</p>
           <p>
-            Wind: {weatherData.windSpeed} m/s {weatherData.windDirection}
+            Wind: {units === 'metric' ? `${weatherData.windSpeed} m/s` : `${(weatherData.windSpeed * 2.237).toFixed(1)} mph`} {weatherData.windDirection}
           </p>
-          <p>Pressure: {weatherData.pressure} hPa</p>
-          <p>Visibility: {weatherData.visibility} km</p>
+          <p>Pressure: {units === 'metric' ? `${weatherData.pressure} hPa` : `${(weatherData.pressure * 0.02953).toFixed(2)} inHg`}</p>
+          <p>Visibility: {units === 'metric' ? `${weatherData.visibility} km` : `${(weatherData.visibility * 0.621371).toFixed(1)} miles`}</p>
         </div>
       </div>
     )
