@@ -18,6 +18,8 @@ interface WeatherCardProps {
   units: 'metric' | 'imperial';
 }
 
+// WeatherCard component to display weather information
+// Fetches weather data from OpenWeatherMap API based on the selected location and units
 const WeatherCard: React.FC<WeatherCardProps> = ({ location, units }) => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,6 +47,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ location, units }) => {
 
         const data = response.data;
         setWeatherData({
+          // Extract relevant data from the API response
           temp: data.main.temp,
           condition: data.weather[0].description,
           icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
@@ -101,10 +104,24 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ location, units }) => {
         <div className="weather-details">
           <p>Humidity: {weatherData.humidity}%</p>
           <p>
-            Wind: {units === 'metric' ? `${weatherData.windSpeed} m/s` : `${(weatherData.windSpeed * 2.237).toFixed(1)} mph`} {weatherData.windDirection}
+            Wind:{' '}
+            {units === 'metric'
+              ? `${weatherData.windSpeed} m/s`
+              : `${(weatherData.windSpeed * 2.237).toFixed(1)} mph`}{' '}
+            {weatherData.windDirection}
           </p>
-          <p>Pressure: {units === 'metric' ? `${weatherData.pressure} hPa` : `${(weatherData.pressure * 0.02953).toFixed(2)} inHg`}</p>
-          <p>Visibility: {units === 'metric' ? `${weatherData.visibility} km` : `${(weatherData.visibility * 0.621371).toFixed(1)} miles`}</p>
+          <p>
+            Pressure:{' '}
+            {units === 'metric'
+              ? `${weatherData.pressure} hPa`
+              : `${(weatherData.pressure * 0.02953).toFixed(2)} inHg`}
+          </p>
+          <p>
+            Visibility:{' '}
+            {units === 'metric'
+              ? `${weatherData.visibility} km`
+              : `${(weatherData.visibility * 0.621371).toFixed(1)} miles`}
+          </p>
         </div>
       </div>
     )

@@ -9,6 +9,8 @@ interface City {
   name: string;
 }
 
+// SearchBar component for location input and suggestions
+// Uses GeoDB Cities API to fetch location suggestions based on user input
 const SearchBar: React.FC<SearchBarProps> = ({ onLocationSelect }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -45,7 +47,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onLocationSelect }) => {
         setIsLoading(false);
       }
     };
-
+    // Debounce the API call
     const debounceTimeout = setTimeout(() => {
       fetchSuggestions();
     }, 300);
@@ -53,10 +55,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onLocationSelect }) => {
     return () => clearTimeout(debounceTimeout);
   }, [query]);
 
+  // Handle input change and update suggestions
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };
 
+  // Handle suggestion click
   const handleSuggestionClick = (suggestion: string) => {
     setQuery(suggestion);
     setSuggestions([]); // Clear suggestions after selection

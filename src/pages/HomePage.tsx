@@ -16,6 +16,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { toggleTheme } from '../store/themeSlice';
 
+// HomePage component
+// Displays the main layout with search bar, weather card, and theme toggle
 const HomePage: React.FC = () => {
   const [location, setLocation] = useState('');
   const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
@@ -23,16 +25,19 @@ const HomePage: React.FC = () => {
   const dispatch = useDispatch();
 
   const theme = createTheme({
+    // Create a theme based on the current mode
     palette: {
       mode: darkMode ? 'dark' : 'light',
     },
   });
 
   const handleToggleTheme = () => {
+    // Toggle between dark and light mode
     dispatch(toggleTheme());
   };
 
   const toggleUnits = () => {
+    // Toggle between metric and imperial units
     setUnits((prevUnits) => (prevUnits === 'metric' ? 'imperial' : 'metric'));
   };
 
